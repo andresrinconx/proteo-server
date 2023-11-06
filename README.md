@@ -1,0 +1,11 @@
+### Setup .env file
+
+
+```js
+const GOOGLE_APPLICATION_CREDENTIALS = ""
+
+DB_HOST=
+DB_USER=
+DB_DATABASE=
+DB_PASSWORD=
+```
