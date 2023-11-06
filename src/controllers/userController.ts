@@ -1,18 +1,6 @@
 import { Request, Response } from 'express'
 import { getMessaging } from 'firebase-admin/messaging'
-import pool from '../config/db'
-
-/**
- * Get all pers.
- */
-export const allPers = async (req: Request, res: Response) => {
-  try {
-    const [rows] = await pool.promise().query('SELECT nombre, codigo FROM pers')
-    res.json(rows)
-  } catch (error) {
-    return res.status(401).json({ msg: error.message })
-  }
-}
+// import pool from '../config/db'
 
 /**
  * Send push notification.
