@@ -1,8 +1,9 @@
 import express from 'express'
-import { sendMessage } from '../controllers/userController'
+import { createPermission, auth } from '../controllers/userController'
 
 const router = express.Router()
 
-router.post('/send', sendMessage)
+router.post('/login', auth)
+router.post('/permission', createPermission)
 
 export default router
