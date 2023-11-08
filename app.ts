@@ -3,8 +3,6 @@ import 'dotenv/config';
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
 import userRoutes from './src/routes/userRoutes';
 
-process.env.GOOGLE_APPLICATION_CREDENTIALS;
-
 const app = express();
 app.use(express.json());
 
