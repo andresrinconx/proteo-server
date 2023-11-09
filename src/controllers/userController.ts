@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { getMessaging } from 'firebase-admin/messaging';
 import { query } from '../config/db';
 import { getFullDate } from '../helpers/dates';
+import { fcmSend } from '../helpers/fcm';
 
 /**
  * User auth.
@@ -15,14 +15,14 @@ export const auth = async (req: Request, res: Response) => {
       UPDATE pers p
       JOIN usuario u 
         ON SUBSTRING(u.cedula, 2) = p.cedula
-      SET p.token = '${fcmToken}'
+      SET p.token = ${fcmToken}
       WHERE 
         u.us_codigo = '${username}' 
         AND u.us_clave = '${password}';
     `);
   
     // get user
-    const user: any = await query(`
+    const rowsUser: any = await query(`
       SELECT p.codigo, p.cedula FROM usuario u
       INNER JOIN pers p 
         ON SUBSTRING(u.cedula, 2) = p.cedula
@@ -32,13 +32,13 @@ export const auth = async (req: Request, res: Response) => {
     `);
   
     // not found
-    if ((user as []).length === 0) {
+    if (rowsUser.length === 0) {
       const error = new Error('User not found');
       return res.status(404).json({ msg: error.message });
     }
   
     // success
-    res.json(user[0]);
+    res.json(rowsUser[0]);
   } catch (error) {
     return res.status(400).json({ msg: error.message });
   }
@@ -47,6 +47,13 @@ export const auth = async (req: Request, res: Response) => {
 /**
  * Create user permission, check supervisors and send push notification.
  */
+// export const createPermission = async (req: Request, res: Response) => {
+//   const { token } = req.body;
+
+//   await fcmSend({ title: 'Test', body: 'Test Notification', token });  
+//   res.json({ msg: 'Sent successfully' });
+// };
+
 export const createPermission = async (req: Request, res: Response) => {
   const { lugar, code, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita, user } = req.body;
 
@@ -61,34 +68,35 @@ export const createPermission = async (req: Request, res: Response) => {
     `);
   
     // get token
-    let token: any = [];
+    let rowsToken: any = [];
     
-    if (tiposol === 'M') { 
-      // "token higiene y salud"
-      token = await query(`
-        
+    if (tipomot === 'M') { 
+      rowsToken = await query(`
+        SELECT token FROM pers WHERE cargo = '113';
       `);
     } else { 
-      // "token jefe"
-      token = await query(`
+      rowsToken = await query(`
         
       `);
     }
 
-    // // token not found
-    if ((token as [])?.length < 1) {
-      const error = new Error('Token not found');
-      return res.status(404).json({ msg: error.message });
-    }
-  
+    // get user full name
+    const rowsUser: any = await query(`
+      SELECT CONCAT(nombre, ' ', apellido) AS full_name FROM pers WHERE codigo = '${code}'
+    `);
+
     // send push notification
-    await getMessaging().send({
-      notification: {
-        title: 'Test',
-        body: 'Test Notification',
-      },
-      token: ''
-    });
+    if (rowsToken?.length > 0) {
+      await fcmSend({ 
+        title: 'Solicitud de permiso', 
+        body: `${rowsUser[0]?.full_name} ha solicitado un permiso.`, 
+        token: rowsToken[0].token 
+      });
+    }
+
+    // send whatsapp message
+    // 
+
     res.status(200).json({ msg: 'Messages sent successfully' });
   } catch (error) {
     return res.status(400).json({ msg: error.message });
