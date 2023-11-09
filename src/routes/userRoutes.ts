@@ -1,5 +1,5 @@
 import express from 'express';
-import { createPermission, auth, logOut } from '../controllers/userController';
+import { permission, auth, logOut } from '../controllers';
 
 const router = express.Router();
 
@@ -8,6 +8,6 @@ router.post('/login', auth);
 router.post('/logout', logOut);
 
 // User actions
-router.post('/permission', createPermission);
+router.post('/permission', permission);
 
 export default router;

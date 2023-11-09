@@ -1,4 +1,6 @@
-
+/**
+ * Serializacion.
+ */
 export const strPad = (str: string, pad_length: number, pad_string: string, pad_type: string) => {
 	const len = pad_length - str.length;
 

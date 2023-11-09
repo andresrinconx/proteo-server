@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-// Send whatsApp message (one device)
+/**
+ * Send whatsApp message (one device).
+ */
 export const whatsAppSend = async (message: string, phone: string) => {
   // validations
   phone = phone.replace(/[() .,;-]/g, '');

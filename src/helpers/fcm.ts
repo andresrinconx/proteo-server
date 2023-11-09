@@ -1,6 +1,8 @@
 import { getMessaging } from 'firebase-admin/messaging';
 
-// Send push notification (one device)
+/**
+ * Send push notification (one device).
+ */
 export const fcmSend = async (data: { title: string, body: string, token: string }) => {
   const { title, body, token } = data;
 
