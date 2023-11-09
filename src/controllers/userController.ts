@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { query } from '../config/db';
 import { getFullDate } from '../helpers/dates';
 import { fcmSend } from '../helpers/fcm';
+import { whatsAppSend } from '../helpers/whatsApp';
 
 /**
  * User auth.
@@ -95,7 +96,12 @@ export const createPermission = async (req: Request, res: Response) => {
     }
 
     // send whatsapp message
-    // 
+    await whatsAppSend(
+      '414-9769740', 
+      `Solicitud de permiso.
+       ${rowsUser[0]?.full_name} ha solicitado un permiso.
+      `
+    );
 
     res.status(200).json({ msg: 'Messages sent successfully' });
   } catch (error) {
