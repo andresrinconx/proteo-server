@@ -97,7 +97,7 @@ export const createPermission = async (req: Request, res: Response) => {
 
     // send whatsapp message
     await whatsAppSend(
-      '414-9769740', 
+      '04120749550', 
       `Solicitud de permiso.
        ${rowsUser[0]?.full_name} ha solicitado un permiso.
       `

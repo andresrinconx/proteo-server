@@ -11,12 +11,14 @@ export const whatsAppSend = async (phone: string, message: string) => {
     try {
       // send message
       await axios.request({
-        url: process.env.WHATSAPP_API_URL, 
+        method: 'POST',
+        // url: process.env.WHATSAPP_API_URL, 
+        url:'http://44.211.133.112:8024/',
         data: {
           messaging_product: 'whatsapp',
           to: phone,
           type: 'text',
-          text: { body: message, preview_url: false },
+          text: { body: message},
         },
         headers: { 
           'Content-Type': 'application/json' 
