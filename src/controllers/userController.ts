@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { getMessaging } from 'firebase-admin/messaging';
 import { query } from '../config/db';
+import { getFullDate } from '../helpers/dates';
 
 /**
  * User auth.
@@ -47,30 +48,47 @@ export const auth = async (req: Request, res: Response) => {
  * Create user permission, check supervisors and send push notification.
  */
 export const createPermission = async (req: Request, res: Response) => {
-  // const { user, lugar, codigo, tiposol, tipomot, fechainicial, fechafinal, horasalida, horaentrada, totalhoras, motivo, horacita } = req.body
+  const { lugar, code, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita, user } = req.body;
 
   try {
     // create permission
-    // const permission = await query(``);
-    // console.log(permission);
+    await query(`
+      INSERT INTO nnoper (usuario, fecha)
+      VALUES ('${user}', '${getFullDate(new Date())}');
+
+      INSERT INTO noper (lugar, codigo, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita, usuario)
+      VALUES ('${lugar}', '${code}', '${tiposol}', '${tipomot}', '${finicial}', '${ffinal}', '${hsalida}', '${hingreso}', '${totald}', '${mot}', '${hcita}', '${fsolicita}', '${user}');
+    `);
   
-    // // get supervisors tokens
-    // const supervisors = await query('');
-  
-    // // not found
-    // if ((supervisors as [])?.length < 1) {
-    //   const error = new Error('Supervisors not found');
+    // get token
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // let token: any = [];
+    
+    // if (tiposol === 'M') { 
+    //   // "token higiene y salud"
+    //   token = await query(`
+        
+    //   `);
+    // } else { 
+    //   // "token jefe"
+    //   token = await query(`
+        
+    //   `);
+    // }
+
+    // // token not found
+    // if ((token as [])?.length < 1) {
+    //   const error = new Error('Token not found');
     //   return res.status(404).json({ msg: error.message });
     // }
   
     // send push notification
-    const tokens = [];
-    await getMessaging().sendEachForMulticast({
+    await getMessaging().send({
       notification: {
         title: 'Test',
         body: 'Test Notification',
       },
-      tokens,
+      token: ''
     });
     res.status(200).json({ msg: 'Messages sent successfully' });
   } catch (error) {
