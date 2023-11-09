@@ -48,12 +48,6 @@ export const auth = async (req: Request, res: Response) => {
 /**
  * Create user permission, check supervisors and send push notification.
  */
-// export const createPermission = async (req: Request, res: Response) => {
-//   const { token } = req.body;
-
-//   await fcmSend({ title: 'Test', body: 'Test Notification', token });  
-//   res.json({ msg: 'Sent successfully' });
-// };
 
 export const createPermission = async (req: Request, res: Response) => {
   const { lugar, code, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita, user } = req.body;
@@ -68,40 +62,37 @@ export const createPermission = async (req: Request, res: Response) => {
       VALUES ('${lugar}', '${code}', '${tiposol}', '${tipomot}', '${finicial}', '${ffinal}', '${hsalida}', '${hingreso}', '${totald}', '${mot}', '${hcita}', '${fsolicita}', '${user}');
     `);
   
-    // get token
-    let rowsToken: any = [];
+    // get boss data
+    let rowsBoss: any = [];
     
     if (tipomot === 'M') { 
-      rowsToken = await query(`
-        SELECT token FROM pers WHERE cargo = '113';
+      rowsBoss = await query(`
+        SELECT token, telefono FROM pers WHERE cargo = '113';
       `);
     } else { 
-      rowsToken = await query(`
+      rowsBoss = await query(`
         
       `);
     }
 
-    // get user full name
+    // get user data
     const rowsUser: any = await query(`
       SELECT CONCAT(nombre, ' ', apellido) AS full_name FROM pers WHERE codigo = '${code}'
     `);
 
-    // send push notification
-    if (rowsToken?.length > 0) {
+    // send messages
+    if (rowsBoss?.length > 0) {
       await fcmSend({ 
         title: 'Solicitud de permiso', 
         body: `${rowsUser[0]?.full_name} ha solicitado un permiso.`, 
-        token: rowsToken[0].token 
+        token: rowsBoss[0].token 
       });
+      await whatsAppSend(
+        `Solicitud de permiso. ${rowsUser[0]?.full_name} ha solicitado un permiso.`,
+        // `${rowsBoss[0]?.telefono}`
+        '04149769740'
+      );
     }
-
-    // send whatsapp message
-    await whatsAppSend(
-      '04120749550', 
-      `Solicitud de permiso.
-       ${rowsUser[0]?.full_name} ha solicitado un permiso.
-      `
-    );
 
     res.status(200).json({ msg: 'Messages sent successfully' });
   } catch (error) {
