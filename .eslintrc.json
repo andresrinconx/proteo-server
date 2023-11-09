@@ -17,6 +17,7 @@
     ],
     "rules": {
         "quotes": ["warn", "single", { "allowTemplateLiterals": true }],
-        "semi": ["warn", "always"]
+        "semi": ["warn", "always"],
+        "@typescript-eslint/no-explicit-any": "off"
     }
 }

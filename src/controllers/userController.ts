@@ -22,7 +22,7 @@ export const auth = async (req: Request, res: Response) => {
     `);
   
     // get user
-    const user = await query(`
+    const user: any = await query(`
       SELECT p.codigo, p.cedula FROM usuario u
       INNER JOIN pers p 
         ON SUBSTRING(u.cedula, 2) = p.cedula
@@ -61,26 +61,25 @@ export const createPermission = async (req: Request, res: Response) => {
     `);
   
     // get token
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // let token: any = [];
+    let token: any = [];
     
-    // if (tiposol === 'M') { 
-    //   // "token higiene y salud"
-    //   token = await query(`
+    if (tiposol === 'M') { 
+      // "token higiene y salud"
+      token = await query(`
         
-    //   `);
-    // } else { 
-    //   // "token jefe"
-    //   token = await query(`
+      `);
+    } else { 
+      // "token jefe"
+      token = await query(`
         
-    //   `);
-    // }
+      `);
+    }
 
     // // token not found
-    // if ((token as [])?.length < 1) {
-    //   const error = new Error('Token not found');
-    //   return res.status(404).json({ msg: error.message });
-    // }
+    if ((token as [])?.length < 1) {
+      const error = new Error('Token not found');
+      return res.status(404).json({ msg: error.message });
+    }
   
     // send push notification
     await getMessaging().send({
