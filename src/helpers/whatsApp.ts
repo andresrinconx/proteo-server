@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 /**
- * Send whatsApp message (one device).
+ * Send WhatsApp message (one device).
  */
 export const whatsAppSend = async (message: string, phone: string) => {
   // validations
@@ -19,7 +19,7 @@ export const whatsAppSend = async (message: string, phone: string) => {
           messaging_product: 'whatsapp',
           to: phone,
           type: 'text',
-          text: { body: message},
+          text: { body: message },
         },
         headers: { 
           'Content-Type': 'application/json' 

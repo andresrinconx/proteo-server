@@ -33,17 +33,22 @@ const permission = async (req: Request, res: Response) => {
       `);
     }
 
-    // send messages
+    // get user data
     const rowsUser: any = await query(`
       SELECT CONCAT(nombre, ' ', apellido) AS full_name FROM pers WHERE codigo = '${code}'
     `);
 
-    if (rowsBoss?.length > 0) {
+    // send push notification
+    if (rowsBoss[0]?.token !== '') {
       await fcmSend({ 
         title: 'Solicitud de permiso', 
         body: `${rowsUser[0]?.full_name} ha solicitado un permiso.`, 
         token: rowsBoss[0].token 
       });
+    }
+
+    // send WhatsApp message
+    if (rowsBoss[0]?.telefono !== '') {
       await whatsAppSend(
         `Solicitud de permiso. ${rowsUser[0]?.full_name} ha solicitado un permiso.`,
         // `${rowsBoss[0]?.telefono}`
@@ -51,7 +56,7 @@ const permission = async (req: Request, res: Response) => {
       );
     }
 
-    res.status(200).json({ msg: 'Messages sent successfully' });
+    res.status(200).json({ msg: 'Permission created successfully' });
   } catch (error) {
     return res.status(400).json({ msg: error.message });
   }
