@@ -8,50 +8,50 @@ import { whatsAppSend } from '../../helpers/whatsApp';
  * Create user permission, check supervisors and send push notification.
  */
 const permission = async (req: Request, res: Response) => {
-  const { lugar, code, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita, user } = req.body;
+  const { lugar, code, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita, user: username } = req.body;
 
   try {
     // create permission
     await query(`
       INSERT INTO nnoper (usuario, fecha)
-      VALUES ('${user}', '${getFullDate(new Date())}');
+      VALUES ('${username}', '${getFullDate(new Date())}');
 
       INSERT INTO noper (lugar, codigo, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita, usuario)
-      VALUES ('${lugar}', '${code}', '${tiposol}', '${tipomot}', '${finicial}', '${ffinal}', '${hsalida}', '${hingreso}', '${totald}', '${mot}', '${hcita}', '${fsolicita}', '${user}');
+      VALUES ('${lugar}', '${code}', '${tiposol}', '${tipomot}', '${finicial}', '${ffinal}', '${hsalida}', '${hingreso}', '${totald}', '${mot}', '${hcita}', '${fsolicita}', '${username}');
     `);
   
     // get boss data
-    let rowsBoss: any = [];
+    let boss: any = [];
     
     if (tipomot === 'M') { 
-      rowsBoss = await query(`
+      boss = await query(`
         SELECT token, telefono FROM pers WHERE cargo = '113';
       `);
     } else { 
-      rowsBoss = await query(`
+      boss = await query(`
         
       `);
     }
 
     // get user data
-    const rowsUser: any = await query(`
+    const user: any = await query(`
       SELECT CONCAT(nombre, ' ', apellido) AS full_name FROM pers WHERE codigo = '${code}'
     `);
 
     // send push notification
-    if (rowsBoss[0]?.token !== '') {
+    if (boss[0]?.token !== '') {
       await fcmSend({ 
-        title: 'Solicitud de permiso', 
-        body: `${rowsUser[0]?.full_name} ha solicitado un permiso.`, 
-        token: rowsBoss[0].token 
+        title: 'Solicitud de permiso pendiente', 
+        body: `${user[0]?.full_name} te ha solicitado un permiso.`, 
+        token: boss[0].token 
       });
     }
 
     // send WhatsApp message
-    if (rowsBoss[0]?.telefono !== '') {
+    if (boss[0]?.telefono !== '') {
       await whatsAppSend(
-        `Solicitud de permiso. ${rowsUser[0]?.full_name} ha solicitado un permiso.`,
-        // `${rowsBoss[0]?.telefono}`
+        `Solicitud de permiso pendiente. ${user[0]?.full_name} te ha solicitado un permiso.`,
+        // `${boss[0]?.telefono}`
         '04149769740'
       );
     }

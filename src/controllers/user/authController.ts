@@ -20,7 +20,7 @@ const auth = async (req: Request, res: Response) => {
     `);
   
     // get user
-    const rowsUser: any = await query(`
+    const user: any = await query(`
       SELECT p.codigo, p.cedula FROM usuario u
       INNER JOIN pers p 
         ON SUBSTRING(u.cedula, 2) = p.cedula
@@ -30,13 +30,13 @@ const auth = async (req: Request, res: Response) => {
     `);
   
     // not found
-    if (rowsUser.length === 0) {
+    if (user.length === 0) {
       const error = new Error('User not found');
       return res.status(404).json({ msg: error.message });
     }
   
     // success
-    res.json(rowsUser[0]);
+    res.json(user[0]);
   } catch (error) {
     return res.status(400).json({ msg: error.message });
   }
