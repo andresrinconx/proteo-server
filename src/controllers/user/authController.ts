@@ -13,7 +13,7 @@ const auth = async (req: Request, res: Response) => {
       UPDATE pers p
       JOIN usuario u 
         ON SUBSTRING(u.cedula, 2) = p.cedula
-      SET p.token = ${fcmToken}
+      SET p.token = '${fcmToken}'
       WHERE 
         u.us_codigo = '${username}' 
         AND u.us_clave = '${password}';

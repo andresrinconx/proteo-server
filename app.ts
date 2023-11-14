@@ -10,7 +10,7 @@ app.use(express.json());
 // Firebase
 initializeApp({
   credential: applicationDefault(),
-  projectId: 'proteoapp',
+  projectId: 'proteo-erp',
 });
 
 // Routes

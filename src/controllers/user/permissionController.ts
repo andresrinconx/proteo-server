@@ -43,7 +43,7 @@ const permission = async (req: Request, res: Response) => {
       await fcmSend({ 
         title: 'Solicitud de permiso pendiente', 
         body: `${user[0]?.full_name} te ha solicitado un permiso.`, 
-        token: boss[0].token 
+        token: boss[0]?.token
       });
     }
 
