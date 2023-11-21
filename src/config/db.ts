@@ -11,7 +11,7 @@ const pool = createPool({
 });
 
 // Query
-export const query = async (query: string) => {
+export const query = async <T>(query: string): Promise<T[]> => {
   const [results] = await pool.promise().query(query);
-  return results;
+  return results as T[];
 };

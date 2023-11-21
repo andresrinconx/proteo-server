@@ -1,7 +1,7 @@
 /**
  * Get date (YYYY-MM-DD HH:mm:ss).
  */
-export const getFullDate = (date: Date) => {
+export const getFullDate = (date: Date): string => {
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();

@@ -9,7 +9,7 @@ const agent = new https.Agent({
 /**
  * Get BCV dollar price
 */
-export const bcvDollarPrice = async () => {
+export const bcvDollarPrice = async ():Promise<string> => {
   try {
     const page = (await axios.get('https://www.bcv.org.ve/', { httpsAgent: agent })).data;
     const $ = cheerio.load(page);

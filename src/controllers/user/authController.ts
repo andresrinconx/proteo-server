@@ -20,7 +20,7 @@ const auth = async (req: Request, res: Response) => {
     `);
   
     // get user
-    const user: any = await query(`
+    const user = await query(`
       SELECT p.codigo, p.cedula FROM usuario u
       INNER JOIN pers p 
         ON SUBSTRING(u.cedula, 2) = p.cedula
