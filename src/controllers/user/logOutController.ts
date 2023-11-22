@@ -1,12 +1,11 @@
-import { Request, Response } from 'express';
-import { query } from '../../config/db';
+import { Response } from 'express';
+import { Request } from '../../types/user';
+import { query } from '../../utils/queries';
 
 /**
  * User log out.
  */
-const logOut = async (req: Request, res: Response) => {
-  const { code } = req.body;
-
+export const logOut = async (req: Request, res: Response) => {
   try {
     // remove fcmToken
     await query(`
@@ -16,8 +15,8 @@ const logOut = async (req: Request, res: Response) => {
         ON SUBSTRING(u.cedula, 2) = p.cedula
       SET p.token = ''
       WHERE 
-        p.codigo = '${code}'
-    `);
+        p.codigo = ?;
+    `, [req.user.codigo]);
   
     // success
     res.json({ msg: 'Log out successfully' });
@@ -25,5 +24,3 @@ const logOut = async (req: Request, res: Response) => {
     return res.status(400).json({ msg: error.message });
   }
 };
-
-export default logOut;

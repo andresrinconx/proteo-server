@@ -1,9 +1,9 @@
-import auth from './user/authController';
-import logOut from './user/logOutController';
-import permission from './user/permissionController';
+import { auth } from './user/authController';
+import { logOut } from './user/logOutController';
+import { newPermission } from './permissions/newPermissionController';
 
 export {
   auth,
   logOut,
-  permission,
+  newPermission,
 };

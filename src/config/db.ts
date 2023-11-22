@@ -1,7 +1,7 @@
 import { createPool } from 'mysql2';
 
-// Datasis pool
-const pool = createPool({
+// Datasis
+export const pool = createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -9,9 +9,3 @@ const pool = createPool({
   connectionLimit: 100,
   multipleStatements: true
 });
-
-// Query
-export const query = async <T>(query: string): Promise<T[]> => {
-  const [results] = await pool.promise().query(query);
-  return results as T[];
-};

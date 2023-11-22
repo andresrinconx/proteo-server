@@ -1,10 +1,15 @@
 import { Request, Response } from 'express';
-import { query } from '../../config/db';
+import { query } from '../../utils/queries';
+import { generateJWT } from '../../helpers/jwt';
+
+interface User {
+  codigo: string;
+}
 
 /**
  * User auth.
  */
-const auth = async (req: Request, res: Response) => {
+export const auth = async (req: Request, res: Response) => {
   const { user: username, password, fcmToken } = req.body;
 
   try {
@@ -13,21 +18,21 @@ const auth = async (req: Request, res: Response) => {
       UPDATE pers p
       JOIN usuario u 
         ON SUBSTRING(u.cedula, 2) = p.cedula
-      SET p.token = '${fcmToken}'
+      SET p.token = ?
       WHERE 
-        u.us_codigo = '${username}' 
-        AND u.us_clave = '${password}';
-    `);
+        u.us_codigo = ? 
+        AND u.us_clave = ?;
+    `, [fcmToken, username, password]);
   
     // get user
-    const user = await query(`
-      SELECT p.codigo, p.cedula FROM usuario u
+    const user = await query<User>(`
+      SELECT p.codigo FROM usuario u
       INNER JOIN pers p 
         ON SUBSTRING(u.cedula, 2) = p.cedula
       WHERE 
-        u.us_codigo = '${username}' 
-        AND u.us_clave = '${password}';
-    `);
+        u.us_codigo = ? 
+        AND u.us_clave = ?;
+    `, [username, password]);
   
     // not found
     if (user.length === 0) {
@@ -36,10 +41,11 @@ const auth = async (req: Request, res: Response) => {
     }
   
     // success
-    res.json(user[0]);
+    res.json({ 
+      ...user[0], 
+      token: generateJWT(user[0].codigo) 
+    });
   } catch (error) {
     return res.status(400).json({ msg: error.message });
   }
 };
-
-export default auth;

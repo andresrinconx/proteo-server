@@ -1,10 +1,9 @@
 import express from 'express';
-import { auth, logOut } from '../controllers';
+import { newPermission } from '../controllers';
 import { checkAuth } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
-router.post('/login', auth);
-router.post('/logout', checkAuth, logOut);
+router.post('/new', checkAuth, newPermission);
 
 export default router;

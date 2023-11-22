@@ -1,12 +1,9 @@
-import { Request, Response } from 'express';
-import { query } from '../../config/db';
-import { getFullDate } from '../../helpers/dates';
+import { Response } from 'express';
+import { Request } from '../../types/user';
+import { query } from '../../utils/queries';
+import { getFullDate } from '../../utils/dates';
 import { fcmSend } from '../../helpers/fcm';
 import { whatsAppSend } from '../../helpers/whatsApp';
-
-interface User {
-  full_name: string;
-}
 
 interface Boss {
   token: string;
@@ -16,25 +13,22 @@ interface Boss {
 /**
  * Create user permission, check supervisors and send push notification.
  */
-const permission = async (req: Request, res: Response) => {
-  const { lugar, code, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita, user: username } = req.body;
+export const newPermission = async (req: Request, res: Response) => {
+  const { lugar, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita } = req.body;
+  const { codigo, us_codigo, us_nombre } = req.user;
 
   // create permission
   try {
     await query(`
       INSERT INTO nnoper (usuario, fecha)
-      VALUES ('${username}', '${getFullDate(new Date())}');
+      VALUES (?, ?);
 
       INSERT INTO noper (lugar, codigo, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita, usuario)
-      VALUES ('${lugar}', '${code}', '${tiposol}', '${tipomot}', '${finicial}', '${ffinal}', '${hsalida}', '${hingreso}', '${totald}', '${mot}', '${hcita}', '${fsolicita}', '${username}');
-    `);
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    `, [us_codigo, getFullDate(new Date()), lugar, codigo, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita, us_codigo]);
     
-    // get user & boss data
+    // get boss data
     try {
-      const user = await query<User>(`
-        SELECT CONCAT(nombre, ' ', apellido) AS full_name FROM pers WHERE codigo = '${code}'
-      `);
-
       let boss = [];
       if (tipomot === 'M') { 
         boss = await query<Boss>(`
@@ -51,7 +45,7 @@ const permission = async (req: Request, res: Response) => {
         if (boss[0].token !== '') {
           await fcmSend({ 
             title: 'Solicitud de permiso pendiente', 
-            body: `${user[0].full_name} te ha solicitado un permiso.`, 
+            body: `${us_nombre} te ha solicitado un permiso.`, 
             token: boss[0]?.token
           });
         }
@@ -63,7 +57,7 @@ const permission = async (req: Request, res: Response) => {
       try {
         if (boss[0].telefono !== '') {
           await whatsAppSend(
-            `Solicitud de permiso pendiente. ${user[0].full_name} te ha solicitado un permiso.`,
+            `Solicitud de permiso pendiente. ${us_nombre} te ha solicitado un permiso.`,
             // `${boss[0].telefono}`
             '04149769740'
           );
@@ -80,5 +74,3 @@ const permission = async (req: Request, res: Response) => {
     return res.status(400).json({ msg: error.message });
   }
 };
-
-export default permission;
