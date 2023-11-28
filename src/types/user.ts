@@ -1,12 +1,13 @@
-import { Request as ExpressRequest } from 'express';
+import { Request } from 'express';
 
-export interface Request extends ExpressRequest {
+export interface UserRequest extends Request {
   user?: User;
 }
 
 export interface User {
-  us_nombre: string;
-  us_codigo: string;
-  cedula: string;
-  codigo: string
+  name: string;
+  usCode: string;
+  idCard: string;
+  code: string;
+  evaluate: string;
 }

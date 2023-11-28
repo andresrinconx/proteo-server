@@ -1,6 +1,3 @@
-/**
- * Serialization.
- */
 export const serialization = (str: string, pad_length: number, pad_string: string, pad_type: string): string => {
 	const len = pad_length - str.length;
 

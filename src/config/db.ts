@@ -1,7 +1,6 @@
 import { createPool } from 'mysql2';
 
-// Datasis
-export const pool = createPool({
+export const datasis = createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,

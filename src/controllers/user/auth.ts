@@ -3,14 +3,12 @@ import { query } from '../../utils/queries';
 import { generateJWT } from '../../helpers/jwt';
 
 interface User {
-  codigo: string;
+  code: string;
+  evaluate: string;
 }
 
-/**
- * User auth.
- */
 export const auth = async (req: Request, res: Response) => {
-  const { user: username, password, fcmToken } = req.body;
+  const { user, password, fcmToken } = req.body;
 
   try {
     // insert fcmToken
@@ -18,32 +16,30 @@ export const auth = async (req: Request, res: Response) => {
       UPDATE pers p
       JOIN usuario u 
         ON SUBSTRING(u.cedula, 2) = p.cedula
-      SET p.token = ?
+      SET p.fcm = ?
       WHERE 
         u.us_codigo = ? 
         AND u.us_clave = ?;
-    `, [fcmToken, username, password]);
+    `, [fcmToken, user, password]);
   
     // get user
-    const user = await query<User>(`
-      SELECT p.codigo FROM usuario u
+    const dbUser = await query<User>(`
+      SELECT p.codigo AS code, p.evalua AS evaluate FROM usuario u
       INNER JOIN pers p 
         ON SUBSTRING(u.cedula, 2) = p.cedula
       WHERE 
         u.us_codigo = ? 
         AND u.us_clave = ?;
-    `, [username, password]);
+    `, [user, password]);
   
-    // not found
-    if (user.length === 0) {
+    if (dbUser.length === 0) {
       const error = new Error('User not found');
       return res.status(404).json({ msg: error.message });
     }
   
-    // success
     res.json({ 
-      ...user[0], 
-      token: generateJWT(user[0].codigo) 
+      jwt: generateJWT(dbUser[0].code),
+      isBoss: dbUser[0].evaluate === 'S' ? true : false,
     });
   } catch (error) {
     return res.status(400).json({ msg: error.message });

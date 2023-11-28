@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { Request } from '../../types/user';
+import { UserRequest } from '../../types/user';
 import { query } from '../../utils/queries';
 import { getFullDate } from '../../utils/dates';
 import { fcmSend } from '../../helpers/fcm';
@@ -7,15 +7,12 @@ import { whatsAppSend } from '../../helpers/whatsApp';
 
 interface Boss {
   token: string;
-  telefono: string;
+  phone: string;
 }
 
-/**
- * Create user permission, check supervisors and send push notification.
- */
-export const newPermission = async (req: Request, res: Response) => {
+export const newPermission = async (req: UserRequest, res: Response) => {
   const { lugar, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita } = req.body;
-  const { codigo, us_codigo, us_nombre } = req.user;
+  const { code, usCode, name } = req.user;
 
   // create permission
   try {
@@ -25,14 +22,14 @@ export const newPermission = async (req: Request, res: Response) => {
 
       INSERT INTO noper (lugar, codigo, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita, usuario)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-    `, [us_codigo, getFullDate(new Date()), lugar, codigo, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita, us_codigo]);
+    `, [usCode, getFullDate(new Date()), lugar, code, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita, usCode]);
     
     // get boss data
     try {
       let boss = [];
       if (tipomot === 'M') { 
         boss = await query<Boss>(`
-          SELECT token, telefono FROM pers WHERE cargo = '113';
+          SELECT token, telefono AS phone FROM pers WHERE cargo = '113';
         `);
       } else { 
         boss = await query<Boss>(`
@@ -45,7 +42,7 @@ export const newPermission = async (req: Request, res: Response) => {
         if (boss[0].token !== '') {
           await fcmSend({ 
             title: 'Solicitud de permiso pendiente', 
-            body: `${us_nombre} te ha solicitado un permiso.`, 
+            body: `${name} te ha solicitado un permiso.`, 
             token: boss[0]?.token
           });
         }
@@ -55,10 +52,10 @@ export const newPermission = async (req: Request, res: Response) => {
 
       // whatsApp message
       try {
-        if (boss[0].telefono !== '') {
+        if (boss[0].phone !== '') {
           await whatsAppSend(
-            `Solicitud de permiso pendiente. ${us_nombre} te ha solicitado un permiso.`,
-            // `${boss[0].telefono}`
+            `Solicitud de permiso pendiente. ${name} te ha solicitado un permiso.`,
+            // `${boss[0].phone}`
             '04149769740'
           );
         }

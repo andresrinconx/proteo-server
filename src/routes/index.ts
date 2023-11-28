@@ -1,5 +1,5 @@
-import userRoutes from '../../src/routes/userRoutes';
-import permissionRoutes from '../../src/routes/permissionRoutes';
+import userRoutes from './user';
+import permissionRoutes from './permission';
 
 export {
   userRoutes,
