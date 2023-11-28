@@ -1,7 +1,11 @@
-import userRoutes from './user';
-import permissionRoutes from './permission';
+import user from './user';
+import permission from './permission';
+import birthdays from './birthdays';
+import payroll from './payroll';
 
 export {
-  userRoutes,
-  permissionRoutes,
+  user,
+  permission,
+  birthdays,
+  payroll
 };

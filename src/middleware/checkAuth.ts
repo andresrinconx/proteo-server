@@ -16,9 +16,10 @@ export const checkAuth = async (req: UserRequest, res: Response, next: NextFunct
           u.us_codigo AS usCode, 
           u.cedula AS idCard, 
           p.codigo AS code,
-          p.evalua AS evaluate
-        FROM 
-          usuario u 
+          p.evalua AS evaluate,
+          p.telefono AS phone,
+          p.email
+        FROM usuario u 
         INNER JOIN pers p
           ON SUBSTRING(u.cedula, 2) = p.cedula
         WHERE 

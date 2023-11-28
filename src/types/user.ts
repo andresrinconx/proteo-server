@@ -10,4 +10,6 @@ export interface User {
   idCard: string;
   code: string;
   evaluate: string;
+  email: string;
+  phone: string;
 }

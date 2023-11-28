@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
+import jsonwebtoken from 'jsonwebtoken';
 
 export const generateJWT = (code: string) => {
-  return jwt.sign({ code }, process.env.JWT_SECRET, { expiresIn: '1y' });
+  return jsonwebtoken.sign({ code }, process.env.JWT_SECRET, { expiresIn: '1y' });
 };
