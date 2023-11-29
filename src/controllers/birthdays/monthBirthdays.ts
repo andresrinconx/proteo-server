@@ -3,7 +3,7 @@ import { query } from '../../utils/queries';
 
 export const monthBirthdays = async (req: Request, res: Response) => {
   try {
-    const dbMonthBirthdays = await query(`
+    const monthBirthdays = await query(`
       SELECT 
         SUBSTRING(nacimi, 9) AS day,
         CONCAT(nombre, ' ', apellido) AS name
@@ -15,7 +15,7 @@ export const monthBirthdays = async (req: Request, res: Response) => {
         AND MONTH(nacimi) = MONTH(CURRENT_DATE)
       ORDER BY day
     `);
-    res.json(dbMonthBirthdays);
+    res.json(monthBirthdays);
   } catch (error) {
     return res.status(400).json({ msg: error.message });
   }

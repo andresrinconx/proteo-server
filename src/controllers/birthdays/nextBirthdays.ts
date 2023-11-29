@@ -4,7 +4,7 @@ import { query } from '../../utils/queries';
 
 export const nextBirthdays = async (req: UserRequest, res: Response) => {
   try {
-    const dbNextBirthdays = await query(`
+    const nextBirthdays = await query(`
       SELECT 
         aa.difer AS difference, 
         GROUP_CONCAT(aa.nombre) AS name
@@ -17,7 +17,7 @@ export const nextBirthdays = async (req: UserRequest, res: Response) => {
         HAVING difer BETWEEN 0 AND 2
       ) AS aa GROUP BY aa.difer ORDER BY aa.difer
     `);
-    res.json(dbNextBirthdays);
+    res.json(nextBirthdays);
   } catch (error) {
     return res.status(400).json({ msg: error.message });
   }

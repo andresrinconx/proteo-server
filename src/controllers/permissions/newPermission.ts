@@ -26,24 +26,25 @@ export const newPermission = async (req: UserRequest, res: Response) => {
     
     // get boss data
     try {
-      let boss = [];
+      let bosses = [];
       if (tipomot === 'M') { 
-        boss = await query<Boss>(`
+        bosses = await query<Boss>(`
           SELECT token, telefono AS phone FROM pers WHERE cargo = '113';
         `);
       } else { 
-        boss = await query<Boss>(`
+        bosses = await query<Boss>(`
 
         `);
       }
+      const boss = bosses[0];
 
       // push notification
       try {
-        if (boss[0].token !== '') {
+        if (boss.token !== '') {
           await fcmSend({ 
             title: 'Solicitud de permiso pendiente', 
             body: `${name} te ha solicitado un permiso.`, 
-            token: boss[0]?.token
+            token: boss?.token
           });
         }
       } catch (error) {
@@ -52,7 +53,7 @@ export const newPermission = async (req: UserRequest, res: Response) => {
 
       // whatsApp message
       try {
-        if (boss[0].phone !== '') {
+        if (boss.phone !== '') {
           await whatsAppSend(
             `Solicitud de permiso pendiente. ${name} te ha solicitado un permiso.`,
             // `${boss[0].phone}`
