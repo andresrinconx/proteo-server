@@ -1,15 +1,11 @@
 import { Response } from 'express';
 import { UserRequest } from '../../types/user';
-import { generateJWT } from '../../helpers/jwt';
+import { authResponse } from '../../helpers/responses';
 
 /**
  * If the user is logged in, create a new jwt.
  */
 export const validateToken = (req: UserRequest, res: Response) => {
-  const { code, evaluate } = req.user;
-
-  res.json({
-    jwt: generateJWT(code),
-    isBoss: evaluate === 'S' ? true : false
-  });
+  const { code, evaluate, position } = req.user;
+  res.json(authResponse({ code, evaluate, position }));
 };

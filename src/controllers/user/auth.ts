@@ -1,11 +1,7 @@
 import { Request, Response } from 'express';
 import { query } from '../../utils/queries';
-import { generateJWT } from '../../helpers/jwt';
-
-interface User {
-  code: string;
-  evaluate: string;
-}
+import { authResponse } from '../../helpers/responses';
+import { AuthResponse } from '../../types/user';
 
 export const auth = async (req: Request, res: Response) => {
   const { user, password, fcmToken } = req.body;
@@ -23,12 +19,17 @@ export const auth = async (req: Request, res: Response) => {
     `, [fcmToken, user, password]);
   
     // get user
-    const users = await query<User>(`
-      SELECT p.codigo AS code, p.evalua AS evaluate FROM usuario u
+    const users = await query<AuthResponse>(`
+      SELECT 
+        p.codigo AS code, 
+        p.evalua AS evaluate,
+        p.cargo AS position 
+      FROM usuario u
       JOIN pers p 
         ON SUBSTRING(u.cedula, 2) = p.cedula
       WHERE 
-        u.us_codigo = ? 
+        p.status = 'A'
+        AND u.us_codigo = ? 
         AND u.us_clave = ?;
     `, [user, password]);
   
@@ -37,10 +38,8 @@ export const auth = async (req: Request, res: Response) => {
       return res.status(404).json({ msg: error.message });
     }
 
-    res.json({ 
-      jwt: generateJWT(users[0].code),
-      isBoss: users[0].evaluate === 'S' ? true : false,
-    });
+    const { code, evaluate, position } = users[0];
+    res.json(authResponse({ code, evaluate, position }));
   } catch (error) {
     return res.status(400).json({ msg: error.message });
   }

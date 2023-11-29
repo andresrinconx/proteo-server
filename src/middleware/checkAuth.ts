@@ -18,12 +18,14 @@ export const checkAuth = async (req: UserRequest, res: Response, next: NextFunct
           p.codigo AS code,
           p.evalua AS evaluate,
           p.telefono AS phone,
+          p.cargo AS position,
           p.email
         FROM usuario u 
         JOIN pers p
           ON SUBSTRING(u.cedula, 2) = p.cedula
         WHERE 
-          p.codigo = ?; 
+          p.status = 'A'
+          AND p.codigo = ?; 
       `, [code]);
 
       req.user = dbUser[0];

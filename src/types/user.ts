@@ -12,4 +12,11 @@ export interface User {
   evaluate: string;
   email: string;
   phone: string;
+  position: string;
+}
+
+export interface AuthResponse {
+  code: string;
+  evaluate: string;
+  position: string;
 }
