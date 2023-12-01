@@ -104,7 +104,7 @@ export const approvePermission = async (req: UserRequest, res: Response) => {
       body = `La solicitud de permiso de ${permission.name} ha sido aprobada por su evaluador directo`;
     }
 
-    // final
+    // HR
     if (position === '132') {
       await query(`
         UPDATE noper 

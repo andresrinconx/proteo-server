@@ -9,6 +9,9 @@ import { payroll } from './payroll/payroll';
 import { approvePermission } from './permissions/approvePermission';
 import { rejectPermission } from './permissions/rejectPermission';
 import { updatePermission } from './permissions/updatePermission';
+import { getUserPermissions } from './permissions/getUserPermissions';
+import { getBossPermissions } from './permissions/getBossPermissions';
+import { getPermission } from './permissions/getPermission';
 
 export {
   auth,
@@ -22,4 +25,7 @@ export {
   approvePermission,
   rejectPermission,
   updatePermission,
+  getUserPermissions,
+  getBossPermissions,
+  getPermission,
 };

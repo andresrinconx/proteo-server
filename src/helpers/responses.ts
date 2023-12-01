@@ -9,6 +9,7 @@ export const authResponse = (data: AuthResponse) => {
 
   return { 
     jwt: generateJWT(code),
-    isBoss: evaluate === 'S' || position === '113' ? true : false,
+    isBoss: evaluate === 'S' || position === '113' || position === '132',
+    isHRBoss: evaluate === 'S' && position === '132',
   };
 };

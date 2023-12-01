@@ -12,7 +12,7 @@ export const checkAuth = async (req: UserRequest, res: Response, next: NextFunct
       const { code } = jsonwebtoken.verify(jwt, process.env.JWT_SECRET) as { code: string };
       const user = await queryOne<User>(`
         SELECT 
-          u.us_nombre AS name, 
+          CONCAT(p.nombre, ' ', p.apellido) AS name, 
           u.us_codigo AS usCode, 
           u.cedula AS idCard, 
           p.codigo AS code,

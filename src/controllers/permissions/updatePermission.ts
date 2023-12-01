@@ -23,7 +23,7 @@ export const updatePermission = async (req: UserRequest, res: Response) => {
       SELECT usuario AS user, lugar, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita
       FROM noper 
       WHERE numero = ?;
-    `, [req.body.id]);
+    `, [req.params.id]);
 
     if (!permission) {
       const error = new Error('Not found');
@@ -52,7 +52,7 @@ export const updatePermission = async (req: UserRequest, res: Response) => {
       req.body.mot || permission.mot,
       req.body.hcita || permission.hcita,
       req.body.fsolicita || permission.fsolicita,
-      req.body.id
+      req.params.id
     ]);
 
     res.json({ msg: 'Permission updated successfully' });
