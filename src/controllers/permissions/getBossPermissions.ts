@@ -17,7 +17,7 @@ export const getBossPermissions = async (req: UserRequest, res: Response) => {
     if (position === '113') {
       permissions = await query(`
         SELECT
-          n.fsolicita AS 'date',
+          DATE_FORMAT(n.fsolicita, '%d-%m-%Y') AS 'date',
           n.totald AS 'time',
           CONCAT(p.nombre, ' ', p.apellido) AS name,
           CASE 
@@ -38,7 +38,7 @@ export const getBossPermissions = async (req: UserRequest, res: Response) => {
     if (position !== '113' && position !== '132' && evaluate === 'S') {
       permissions = await query(`
         SELECT
-          n.fsolicita AS 'date',
+          DATE_FORMAT(n.fsolicita, '%d-%m-%Y') AS 'date',
           n.totald AS 'time',
           CONCAT(p.nombre, ' ', p.apellido) AS name,
           CASE 
@@ -63,7 +63,7 @@ export const getBossPermissions = async (req: UserRequest, res: Response) => {
     if (position === '132') {
       permissions = await query(`
         SELECT
-          n.fsolicita AS 'date',
+          DATE_FORMAT(n.fsolicita, '%d-%m-%Y') AS 'date',
           n.totald AS 'time',
           CONCAT(p.nombre, ' ', p.apellido) AS name,
           CASE 

@@ -8,7 +8,7 @@ export const getUserPermissions = async (req: UserRequest, res: Response) => {
   try {
     const permissions = await query(`
       SELECT 
-        fsolicita AS 'date',
+        DATE_FORMAT(fsolicita, '%d-%m-%Y') AS 'date',
         lugar AS place,
         CASE 
           WHEN estatus = 'A' THEN 'Aprobado'
