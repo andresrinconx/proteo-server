@@ -1,6 +1,6 @@
 import { auth } from './user/auth';
 import { logOut } from './user/logOut';
-import { newPermission } from './permissions/newPermission';
+import { createPermission } from './permissions/createPermission';
 import { validateToken } from './user/validateToken';
 import { profile } from './user/profile';
 import { monthBirthdays } from './birthdays/monthBirthdays';
@@ -8,12 +8,12 @@ import { nextBirthdays } from './birthdays/nextBirthdays';
 import { payroll } from './payroll/payroll';
 import { approvePermission } from './permissions/approvePermission';
 import { rejectPermission } from './permissions/rejectPermission';
-import { editPermission } from './permissions/editPermission';
+import { updatePermission } from './permissions/updatePermission';
 
 export {
   auth,
   logOut,
-  newPermission,
+  createPermission,
   validateToken,
   profile,
   monthBirthdays,
@@ -21,5 +21,5 @@ export {
   payroll,
   approvePermission,
   rejectPermission,
-  editPermission,
+  updatePermission,
 };

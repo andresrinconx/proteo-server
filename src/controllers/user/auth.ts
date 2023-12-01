@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { query } from '../../utils/queries';
+import { query, queryOne } from '../../utils/queries';
 import { authResponse } from '../../helpers/responses';
 import { AuthResponse } from '../../types/user';
 
 export const auth = async (req: Request, res: Response) => {
-  const { user, password, fcmToken } = req.body;
+  const { user: username, password, fcmToken } = req.body;
 
   try {
     // insert fcmToken
@@ -16,10 +16,10 @@ export const auth = async (req: Request, res: Response) => {
       WHERE 
         u.us_codigo = ? 
         AND u.us_clave = ?;
-    `, [fcmToken, user, password]);
+    `, [fcmToken, username, password]);
   
     // get user
-    const users = await query<AuthResponse>(`
+    const user = await queryOne<AuthResponse>(`
       SELECT 
         p.codigo AS code, 
         p.evalua AS evaluate,
@@ -31,14 +31,14 @@ export const auth = async (req: Request, res: Response) => {
         p.status = 'A'
         AND u.us_codigo = ? 
         AND u.us_clave = ?;
-    `, [user, password]);
+    `, [username, password]);
   
-    if (users.length === 0) {
+    if (!user) {
       const error = new Error('User not found');
       return res.status(404).json({ msg: error.message });
     }
 
-    const { code, evaluate, position } = users[0];
+    const { code, evaluate, position } = user;
     res.json(authResponse({ code, evaluate, position }));
   } catch (error) {
     return res.status(400).json({ msg: error.message });

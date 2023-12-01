@@ -2,7 +2,7 @@ import express from 'express';
 import 'dotenv/config';
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
 import { Server } from 'socket.io';
-import { user, permission, birthdays, payroll } from './src/routes';
+import { user, permissions, birthdays, payroll } from './src/routes';
 
 const app = express();
 app.use(express.json());
@@ -15,7 +15,7 @@ initializeApp({
 
 // Routes
 app.use('/api/user', user);
-app.use('/api/permission', permission);
+app.use('/api/permissions', permissions);
 app.use('/api/birthdays', birthdays);
 app.use('/api/payroll', payroll);
 

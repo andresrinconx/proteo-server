@@ -1,11 +1,13 @@
-export const serialization = (str: string, pad_length: number, pad_string: string, pad_type: string): string => {
-	const len = pad_length - str.length;
+import { queryOne } from '../utils/queries';
 
-	if (len < 0) return str;
-	
-	const pad = new Array(len + 1).join(pad_string);
-    
-	if (pad_type == 'STR_PAD_LEFT') return pad + str;
-    
-	return str + pad;
+interface PermissionNumber {
+	number: string
+}
+
+export const newSerialization = async (): Promise<string> => {
+	const lastRow = await queryOne<PermissionNumber>(`SELECT numero AS number FROM noper ORDER BY numero DESC LIMIT 1;`);
+
+	const incrementedNumber = parseInt(lastRow.number, 10) + 1;
+	const serialization = incrementedNumber.toString().padStart(lastRow.number.length, '0');
+	return serialization;
 };
