@@ -32,23 +32,23 @@ export const createPermission = async (req: UserRequest, res: Response) => {
     return res.status(400).json({ msg: error.message });
   }
 
-  // get boss data
+  // messaging
   try {
     let boss;
     if (tipomot === 'M') { 
       boss = await queryOne<Boss>(`
         SELECT 
-          fcm, 
+          fcm AS token, 
           telefono AS phone 
         FROM pers 
         WHERE
-          p.status = 'A' 
+          status = 'A' 
           AND cargo = '113';
       `);
     } else { 
       boss = await queryOne<Boss>(`
         SELECT
-          p2.fcm,
+          p2.fcm AS token,
           p2.telefono AS phone
         FROM pers p1
         JOIN pers p2

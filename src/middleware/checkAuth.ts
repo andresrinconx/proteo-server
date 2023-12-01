@@ -1,7 +1,7 @@
 import jsonwebtoken from 'jsonwebtoken';
 import { Response, NextFunction } from 'express';
 import { UserRequest, User } from '../types/user';
-import { query } from '../utils/queries';
+import { queryOne } from '../utils/queries';
 
 export const checkAuth = async (req: UserRequest, res: Response, next: NextFunction) => {
   let jwt: string;
@@ -10,7 +10,7 @@ export const checkAuth = async (req: UserRequest, res: Response, next: NextFunct
     try {
       jwt = req.headers.authorization.split(' ')[1];
       const { code } = jsonwebtoken.verify(jwt, process.env.JWT_SECRET) as { code: string };
-      const dbUser = await query<User>(`
+      const user = await queryOne<User>(`
         SELECT 
           u.us_nombre AS name, 
           u.us_codigo AS usCode, 
@@ -28,8 +28,12 @@ export const checkAuth = async (req: UserRequest, res: Response, next: NextFunct
           AND p.codigo = ?; 
       `, [code]);
 
-      req.user = dbUser[0];
-
+      if (!user) {
+        const error = new Error('User not found');
+        return res.status(404).json({ msg: error.message });
+      }
+      
+      req.user = user;
       return next();
     } catch (error) {
       return res.status(403).json({ msg: error.message });
