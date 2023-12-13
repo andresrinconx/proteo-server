@@ -32,7 +32,7 @@ export const auth = async (req: Request, res: Response) => {
         AND u.us_codigo = ? 
         AND u.us_clave = ?;
     `, [username, password]);
-  
+
     if (!user) {
       const error = new Error('User not found');
       return res.status(404).json({ msg: error.message });

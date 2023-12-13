@@ -19,7 +19,12 @@ export const getPermission = async (req: UserRequest, res: Response) => {
         n.mot,
         n.hcita,
         n.fsolicita,
-        CONCAT(p.nombre, ' ', p.apellido) AS name
+        CONCAT(p.nombre, ' ', p.apellido) AS name,
+        CASE 
+          WHEN estatus IS NULL THEN 'Por aprobar'
+          WHEN estatus = 'A' THEN 'Aprobado'
+          WHEN estatus = 'R' THEN 'Rechazado'
+        END AS status
       FROM noper n
       JOIN pers p ON p.codigo = n.codigo
       WHERE numero = ?;

@@ -8,6 +8,7 @@ export const getUserPermissions = async (req: UserRequest, res: Response) => {
   try {
     const permissions = await query(`
       SELECT 
+        numero AS id,
         DATE_FORMAT(fsolicita, '%d-%m-%Y') AS 'date',
         lugar AS place,
         CASE 
@@ -17,6 +18,7 @@ export const getUserPermissions = async (req: UserRequest, res: Response) => {
         END AS status
       FROM noper 
       WHERE codigo = ? 
+      ORDER BY fsolicita DESC
       LIMIT 5;
     `, [code]);
 

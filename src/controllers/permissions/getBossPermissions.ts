@@ -17,6 +17,7 @@ export const getBossPermissions = async (req: UserRequest, res: Response) => {
     if (position === '113') {
       permissions = await query(`
         SELECT
+          numero AS id,
           DATE_FORMAT(n.fsolicita, '%d-%m-%Y') AS 'date',
           n.totald AS 'time',
           CONCAT(p.nombre, ' ', p.apellido) AS name,
@@ -30,7 +31,7 @@ export const getBossPermissions = async (req: UserRequest, res: Response) => {
           tipomot = 'M'
           AND (supervisor IS NULL OR supervisor = 'SM')
           AND fsolicita >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
-        ORDER BY supervisor;
+        ORDER BY fsolicita DESC;
       `);
     }
 
@@ -38,6 +39,7 @@ export const getBossPermissions = async (req: UserRequest, res: Response) => {
     if (position !== '113' && position !== '132' && evaluate === 'S') {
       permissions = await query(`
         SELECT
+          numero AS id,
           DATE_FORMAT(n.fsolicita, '%d-%m-%Y') AS 'date',
           n.totald AS 'time',
           CONCAT(p.nombre, ' ', p.apellido) AS name,
@@ -55,7 +57,7 @@ export const getBossPermissions = async (req: UserRequest, res: Response) => {
           )
           AND p.evaluador = ?
           AND fsolicita >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
-        ORDER BY supervisor;
+        ORDER BY fsolicita DESC;
       `, [code]);
     }
 
@@ -63,6 +65,7 @@ export const getBossPermissions = async (req: UserRequest, res: Response) => {
     if (position === '132') {
       permissions = await query(`
         SELECT
+          numero AS id,
           DATE_FORMAT(n.fsolicita, '%d-%m-%Y') AS 'date',
           n.totald AS 'time',
           CONCAT(p.nombre, ' ', p.apellido) AS name,
@@ -77,7 +80,7 @@ export const getBossPermissions = async (req: UserRequest, res: Response) => {
           supervisor IS NOT NULL
           AND (supervisor = 'SO' OR supervisor = 'SMA')
           AND fsolicita >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
-        ORDER BY supervisor;
+        ORDER BY fsolicita DESC;
       `);
     }
 
