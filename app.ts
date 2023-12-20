@@ -2,6 +2,7 @@ import express from 'express';
 import 'dotenv/config';
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
 import { Server } from 'socket.io';
+import { initSocketEvents } from './src/helpers/socketEvents';
 import { user, permissions, birthdays, payroll } from './src/routes';
 
 const app = express();
@@ -26,12 +27,5 @@ const server = app.listen(port, () => {
 });
 
 // Sockets
-const io = new Server(server, {
-  pingTimeout: 60000,
-});
-
-io.on('connection', (socket) => {
-  socket.on('test', () => {
-    console.log('test');
-  });
-});
+const io = new Server(server, { pingTimeout: 60000 });
+initSocketEvents(io);

@@ -4,7 +4,8 @@ import { query, queryOne } from '../../utils/queries';
 import { getFullDate } from '../../utils/dates';
 import { fcmSend } from '../../helpers/fcm';
 import { whatsAppSend } from '../../helpers/whatsApp';
-import { newSerialization } from '../../helpers/serialization';
+import { newSerialization } from '../../helpers/queries';
+import { getPermissionToBoss } from '../../helpers/queries';
 
 interface Boss {
   token: string;
@@ -26,8 +27,8 @@ export const createPermission = async (req: UserRequest, res: Response) => {
       INSERT INTO noper (numero, lugar, codigo, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita, usuario)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     `, [usCode, getFullDate(new Date()), serialization, lugar, code, tiposol, tipomot, finicial, ffinal, hsalida, hingreso, totald, mot, hcita, fsolicita, usCode]);
-    
-    res.json({ msg: 'Permission created successfully' });
+
+    res.json(await getPermissionToBoss(serialization));
   } catch (error) {
     return res.status(400).json({ msg: error.message });
   }

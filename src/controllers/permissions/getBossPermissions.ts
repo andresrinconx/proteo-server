@@ -19,7 +19,6 @@ export const getBossPermissions = async (req: UserRequest, res: Response) => {
         SELECT
           numero AS id,
           DATE_FORMAT(n.fsolicita, '%d-%m-%Y') AS 'date',
-          n.totald AS 'time',
           CONCAT(p.nombre, ' ', p.apellido) AS name,
           CASE 
             WHEN supervisor IS NULL THEN 'Por aprobar'
@@ -41,7 +40,6 @@ export const getBossPermissions = async (req: UserRequest, res: Response) => {
         SELECT
           numero AS id,
           DATE_FORMAT(n.fsolicita, '%d-%m-%Y') AS 'date',
-          n.totald AS 'time',
           CONCAT(p.nombre, ' ', p.apellido) AS name,
           CASE 
             WHEN (supervisor IS NULL AND tipomot = 'O') OR (supervisor = 'SM' AND tipomot = 'M') THEN 'Por aprobar'
@@ -67,7 +65,6 @@ export const getBossPermissions = async (req: UserRequest, res: Response) => {
         SELECT
           numero AS id,
           DATE_FORMAT(n.fsolicita, '%d-%m-%Y') AS 'date',
-          n.totald AS 'time',
           CONCAT(p.nombre, ' ', p.apellido) AS name,
           CASE 
             WHEN estatus IS NULL THEN 'Por aprobar'

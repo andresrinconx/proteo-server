@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { query, queryOne } from '../../utils/queries';
 import { fcmSend } from '../../helpers/fcm';
 import { whatsAppSend } from '../../helpers/whatsApp';
+import { getPermissionToBoss } from '../../helpers/queries';
 
 interface Permission {
   name: string;
@@ -118,7 +119,7 @@ export const approvePermission = async (req: UserRequest, res: Response) => {
       body = `Tu solicitud de permiso para "${permission.place}" ha sido aprobada por Talento Humano`;
     }
 
-    res.json({ msg: 'Permission approved successfully' });
+    res.json(await getPermissionToBoss(id));
   } catch (error) {
     return res.status(400).json({ msg: error.message });
   }

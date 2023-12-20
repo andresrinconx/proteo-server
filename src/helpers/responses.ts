@@ -8,6 +8,7 @@ export const authResponse = (data: AuthResponse) => {
   const { position, evaluate, code } = data;
 
   return { 
+    id: code,
     jwt: generateJWT(code),
     isBoss: evaluate === 'S' || position === '113' || position === '132',
     isHRBoss: evaluate === 'S' && position === '132',
