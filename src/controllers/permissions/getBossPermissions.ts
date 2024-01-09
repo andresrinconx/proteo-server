@@ -23,12 +23,13 @@ export const getBossPermissions = async (req: UserRequest, res: Response) => {
           CASE 
             WHEN supervisor IS NULL THEN 'Por aprobar'
             WHEN supervisor = 'SM' THEN 'Aprobado'
+            WHEN supervisor = 'R' AND estatus = 'R' THEN 'Rechazado'
           END AS status
         FROM noper n
         JOIN pers p ON n.codigo = p.codigo
         WHERE
           tipomot = 'M'
-          AND (supervisor IS NULL OR supervisor = 'SM')
+          AND ((supervisor IS NULL OR supervisor = 'SM') OR (supervisor = 'R' AND estatus = 'R'))
           AND fsolicita >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
         ORDER BY fsolicita DESC;
       `);
@@ -44,6 +45,7 @@ export const getBossPermissions = async (req: UserRequest, res: Response) => {
           CASE 
             WHEN (supervisor IS NULL AND tipomot = 'O') OR (supervisor = 'SM' AND tipomot = 'M') THEN 'Por aprobar'
             WHEN supervisor = 'SMA' OR supervisor = 'SO' THEN 'Aprobado'
+            WHEN supervisor = 'R' AND estatus = 'R' THEN 'Rechazado'
           END AS status
         FROM noper n
         JOIN pers p ON n.codigo = p.codigo
@@ -52,6 +54,7 @@ export const getBossPermissions = async (req: UserRequest, res: Response) => {
             (supervisor IS NULL AND tipomot = 'O')
             OR (supervisor = 'SM' AND tipomot = 'M')
             OR (supervisor = 'SO' OR supervisor = 'SMA')
+            OR ((supervisor = 'R' AND estatus = 'R') AND tipomot = 'O')
           )
           AND p.evaluador = ?
           AND fsolicita >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)

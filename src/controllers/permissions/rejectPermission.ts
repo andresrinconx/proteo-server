@@ -12,10 +12,10 @@ interface Permission {
 }
 
 export const rejectPermission = async (req: UserRequest, res: Response) => {
-  const { position } = req.user;
+  const { position, evaluate } = req.user;
   const { id } = req.body;
 
-  if (position !== '132') {
+  if (position !== '113' && position !== '132' && evaluate === 'N') {
     const error = new Error('Invalid action');
     return res.status(403).json({ msg: error.message });
   }
@@ -38,16 +38,24 @@ export const rejectPermission = async (req: UserRequest, res: Response) => {
       WHERE n.numero = ?;
     `, [id]);
 
-    await query(`
-      UPDATE noper 
-      SET estatus = 'R'
-      WHERE numero = ?;
-    `, [id]);
+    if (position === '132') {
+      await query(`
+        UPDATE noper 
+        SET estatus = 'R'
+        WHERE numero = ?;
+      `, [id]);
+    } else {
+      await query(`
+        UPDATE noper 
+        SET estatus = 'R', supervisor = 'R'
+        WHERE numero = ?;
+      `, [id]);
+    }
 
     token = permission.token;
     phone = permission.phone;
     title = 'Solicitud de permiso rechazada';
-    body = `Tu solicitud de permiso para "${permission.place}" ha sido rechazada por Talento Humano`;
+    body = `Tu solicitud de permiso para "${permission.place}" ha sido rechazada`;
 
     res.json({ msg: 'Permission rejected successfully' });
   } catch (error) {
